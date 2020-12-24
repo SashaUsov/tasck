@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.task.domein.GetInfoRequest;
 import com.test.task.domein.InfoResponse;
 import com.test.task.exception.ConversionException;
+import com.test.task.exception.DataNotFoundException;
+import com.test.task.exception.RequestNotValidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,15 +29,15 @@ public class RequestHandlerService {
         logObject(getJsonFromObject(request), "Request");
 
         if (request == null) {
-            logObject(getJsonFromObject(null), "Response");
-            return null;
+            logObject(getJsonFromObject("Request not valid"), "Response");
+            throw new RequestNotValidException("Request not valid");
         } else if (request.getId() == 1) {
             var response = new InfoResponse();
             logObject(getJsonFromObject(response), "Response");
             return response;
         } else {
-            logObject(getJsonFromObject(null), "Response");
-            return null;
+            logObject(getJsonFromObject("Data not found"), "Response");
+            throw new DataNotFoundException("Data not found");
         }
     }
 

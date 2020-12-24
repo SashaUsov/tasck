@@ -3,6 +3,8 @@ package com.test.task.exception.handler;
 import com.test.task.exception.BusinessExceptions;
 import com.test.task.domein.ex.ApiError;
 import com.test.task.domein.ex.ErrorInfo;
+import com.test.task.exception.DataNotFoundException;
+import com.test.task.exception.RequestNotValidException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ public class ExceptionHandlerService {
 
     @ExceptionHandler({HttpMessageNotReadableException.class,
             MethodArgumentNotValidException.class,
+            RequestNotValidException.class,
+            DataNotFoundException.class,
             BusinessExceptions.class,
             Exception.class
     })
@@ -37,6 +41,16 @@ public class ExceptionHandlerService {
             var mbre = (HttpMessageNotReadableException) ex;
 
             return handleHttpMessageNotReadableException(mbre, status);
+        } else if (ex instanceof RequestNotValidException) {
+            var status = HttpStatus.BAD_REQUEST;
+            var rnve = (RequestNotValidException) ex;
+
+            return handleRequestNotValidException(rnve, status);
+        } else if (ex instanceof DataNotFoundException) {
+            var status = HttpStatus.NO_CONTENT;
+            var dnfe = (DataNotFoundException) ex;
+
+            return handleDataNotFoundException(dnfe, status);
         } else if (ex instanceof BusinessExceptions) {
             var status = HttpStatus.INTERNAL_SERVER_ERROR;
             var be = (BusinessExceptions) ex;
@@ -52,6 +66,18 @@ public class ExceptionHandlerService {
     private ResponseEntity<ApiError> handleBusinessExceptions(BusinessExceptions ex, HttpStatus status) {
 
         return new ResponseEntity<>(new ApiError("business_exceptions",
+                Collections.singleton(new ErrorInfo(status.toString(), ex.getMessage()))), status);
+    }
+
+    private ResponseEntity<ApiError> handleRequestNotValidException(RequestNotValidException ex, HttpStatus status) {
+
+        return new ResponseEntity<>(new ApiError("request_not_valid",
+                Collections.singleton(new ErrorInfo(status.toString(), ex.getMessage()))), status);
+    }
+
+    private ResponseEntity<ApiError> handleDataNotFoundException(DataNotFoundException ex, HttpStatus status) {
+
+        return new ResponseEntity<>(new ApiError("data_not_found",
                 Collections.singleton(new ErrorInfo(status.toString(), ex.getMessage()))), status);
     }
 
