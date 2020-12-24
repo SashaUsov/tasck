@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.task.domein.GetInfoRequest;
 import com.test.task.domein.InfoResponse;
 import com.test.task.exception.ConversionException;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
@@ -14,13 +15,17 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 
 @Service
-@Slf4j
 public class RequestHandlerService {
 
     private final Aes256Class aes;
 
-    public RequestHandlerService(Aes256Class aes) {
+    private final ObjectMapper mapper;
+
+    private final Logger log = LogManager.getLogger(this.getClass());
+
+    public RequestHandlerService(Aes256Class aes, ObjectMapper mapper) {
         this.aes = aes;
+        this.mapper = mapper;
     }
 
     public InfoResponse handleRequest(GetInfoRequest request) {
@@ -40,7 +45,6 @@ public class RequestHandlerService {
     }
 
     private String getJsonFromObject(Object o) {
-        ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
