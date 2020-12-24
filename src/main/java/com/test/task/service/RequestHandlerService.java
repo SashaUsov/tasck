@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.task.domein.GetInfoRequest;
 import com.test.task.domein.InfoResponse;
 import com.test.task.exception.ConversionException;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import com.test.task.exception.DataNotFoundException;
 import com.test.task.exception.RequestNotValidException;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
